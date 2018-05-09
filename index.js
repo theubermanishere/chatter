@@ -1,30 +1,18 @@
 var express = require('express')
-var app = require('express')();
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
+var io = require('socket.io')
+var router = express.Router()
+var home = require('./routes/home')
 var path = require('path')
 
-app.use(function(req, res, next) {
-    res.setHeader("Content-Security-Policy", "script-src 'self' https://code.jquery.com/jquery-1.11.1.js http://localhost:3000");
-    return next();
-});
+port = process.env.port || 8080
 
-app.use(express.static('static'));
+app = express()
 
-app.get('/', function(req, res) {
-	res.sendFile(path.join(__dirname, 'static', 'index.html'));
-});
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'pug');
+app.use(express.static(path.join(__dirname, 'public')));
 
-io.on('connection', function(socket){
-	console.log("a user connected");
-	socket.on('chat message', function(msg) {
-		console.log('message: ' + msg);
-	});
-	socket.on('disconnect', function(){
-		console.log('user disconnected');
-	});
-});
 
-http.listen(3000, function() {
-	console.log('listening on *:3000');
-});
+app.get('/', home);
+
+app.listen(port, () => console.log("Server is running on port " + port));
