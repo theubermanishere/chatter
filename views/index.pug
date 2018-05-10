@@ -1,3 +1,17 @@
+head 
+	style
+		include ../static/style.css
+
 p aoeu
 
 script(src="/socket.io/socket.io.js")
+script.
+	var socket = io.connect()
+	socket.on('info', (data) => {
+		socket.emit('other', { my: 'data'});
+	});
+	socket.emit('msg', { data: "There is fire" });
+
+	socket.on('msg', (data) => {
+	console.log(data);
+	});
